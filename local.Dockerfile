@@ -6,4 +6,4 @@ COPY . .
 RUN yarn install -y \
   && yarn build
 
-ENTRYPOINT [ "yarn", "start:dev" ]
+EXPOSE 9999
