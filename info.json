@@ -1,0 +1,17 @@
+{
+  "name": "Jose Eduardo",
+  "social": [
+    "https://jos3duardo.com.br"
+  ],
+  "source-code-repo": "https://github.com/jos3duardo/rinha-backend-2025",
+  "langs": [
+    "node"
+  ],
+  "storages": [
+    "postgresql",
+    "redis"
+  ],
+  "load-balancers": [
+    "nginx"
+  ]
+}
