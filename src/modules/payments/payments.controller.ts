@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { PaymentsService } from './payments.service';
+import { PaymentsService } from './services/payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 
 @Controller('payments')
@@ -7,7 +7,7 @@ export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post()
-  async payment(@Body() createPaymentDto: CreatePaymentDto) {
+  async payment(@Body() createPaymentDto: CreatePaymentDto): Promise<any> {
     return this.paymentsService.store(createPaymentDto);
   }
 }
