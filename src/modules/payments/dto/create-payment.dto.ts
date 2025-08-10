@@ -1,9 +1,9 @@
-import {IsNumber, IsUUID} from "class-validator";
+import { IsNumber, IsUUID } from 'class-validator';
 
 export class CreatePaymentDto {
-    @IsNumber()
-    amount: number;
+  @IsNumber()
+  amount: number;
 
-    @IsUUID()
-    correlationId: string;
+  @IsUUID()
+  correlationId: string;
 }
