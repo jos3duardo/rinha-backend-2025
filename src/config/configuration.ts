@@ -15,7 +15,7 @@ export default () => ({
   },
   paymentProcessors: {
     defaultUrl:
-      env.PAYMENT_PROCESSOR_URL_DEFAULT || 'http://192.168.1.126:8001',
+      env.PAYMENT_PROCESSOR_URL_DEFAULT || 'http://192.168.1.126:8002',
     fallbackUrl:
       env.PAYMENT_PROCESSOR_URL_FALLBACK || 'http://192.168.1.126:8002',
     healthCheckInterval: env.HEALTH_CHECK_INTERVAL || 5000, // 5 segundos
