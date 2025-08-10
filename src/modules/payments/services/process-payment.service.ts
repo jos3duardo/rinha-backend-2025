@@ -7,7 +7,6 @@ import { ProcessorTypeEnum } from '../enumns/processor-type.enum';
 import { PaymentStatusEnum } from '../enumns/payment-status.enum';
 import { PaymentDefaultProcessor } from '../processor/payment-default.processor';
 import { PaymentFallbackProcessor } from '../processor/payment-fallback.processor';
-import { RetryPaymentService } from './retry-payment.service';
 
 @Injectable()
 export class ProcessPaymentService {
@@ -18,7 +17,6 @@ export class ProcessPaymentService {
     private healthService: HealthService,
     private paymentDefaultProcessor: PaymentDefaultProcessor,
     private paymentFallbackProcessor: PaymentFallbackProcessor,
-    private retryPaymentService: RetryPaymentService,
   ) {}
 
   async execute(paymentId: string): Promise<void> {
@@ -40,24 +38,11 @@ export class ProcessPaymentService {
       throw new Error('No payment processor available');
     }
 
-    let result;
-
-    let processorUsed: ProcessorTypeEnum =
-      preferredProcessor === ProcessorTypeEnum.DEFAULT
-        ? ProcessorTypeEnum.DEFAULT
-        : ProcessorTypeEnum.FALLBACK;
-
     try {
       if (preferredProcessor === ProcessorTypeEnum.DEFAULT) {
-        result = await this.paymentDefaultProcessor.execute(payment);
-        processorUsed = ProcessorTypeEnum.DEFAULT;
+        await this.paymentDefaultProcessor.execute(payment);
       } else {
-        result = await this.paymentFallbackProcessor.execute(payment);
-        processorUsed = ProcessorTypeEnum.FALLBACK;
-      }
-
-      if (!result) {
-        await this.retryPaymentService.execute(payment.id, processorUsed);
+        await this.paymentFallbackProcessor.execute(payment);
       }
     } catch (error) {
       this.logger.error(
@@ -67,7 +52,6 @@ export class ProcessPaymentService {
       await this.repository.update(payment.id, {
         status: PaymentStatusEnum.RETRY,
       });
-      await this.retryPaymentService.execute(payment.id, processorUsed);
     }
   }
 }
