@@ -6,12 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Payment } from './entities/payment.entity';
 import { HealthModule } from '../health/health.module';
 import { PaymentDefaultProcessor } from './processor/payment-default.processor';
-import { RetryPaymentService } from './services/retry-payment.service';
 import { PaymentProcessor } from './processor/payment.processor';
 import { ProcessPaymentService } from './services/process-payment.service';
 import { QueueModule } from '../queue/queue.module';
 import { DatabaseModule } from '../database/database.module';
 import { PaymentFallbackProcessor } from './processor/payment-fallback.processor';
+import { PaymentsSummaryService } from './services/payments-summary.service';
+import { PaymentsCron } from './cron/payments.cron';
+import { MakePaymentToProcessorService } from './services/make-payment-to-processor.service';
 
 @Module({
   imports: [
@@ -25,10 +27,12 @@ import { PaymentFallbackProcessor } from './processor/payment-fallback.processor
   providers: [
     PaymentsService,
     PaymentDefaultProcessor,
-    RetryPaymentService,
     PaymentProcessor,
     ProcessPaymentService,
     PaymentFallbackProcessor,
+    PaymentsSummaryService,
+    PaymentsCron,
+    MakePaymentToProcessorService,
   ],
 })
 export class PaymentsModule {}
