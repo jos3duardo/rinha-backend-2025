@@ -5,6 +5,7 @@ CREATE UNLOGGED TABLE payments (
     payment_processor VARCHAR(50,
     status VARCHAR(50) NOT NULL,
     error_message TEXT,
+    attempts INTEGER,
     created_at TIMESTAMP default now() NOT NULL
 );
 
