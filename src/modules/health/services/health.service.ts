@@ -62,20 +62,14 @@ export class HealthService {
     try {
       const response = await firstValueFrom(
         this.httpService.get(url, {
-          timeout: 6000,
+          timeout: 500,
         }),
       );
 
       status =
         response.status === 200 ? ServiceStatusEnum.UP : ServiceStatusEnum.DOWN;
-
-      this.logger.log(`Health check for ${serviceName}: ${status}`);
     } catch (error) {
       status = ServiceStatusEnum.DOWN;
-
-      this.logger.warn(
-        `Health check failed for ${serviceName}: ${error.message}`,
-      );
     }
 
     if (serviceName === 'default') {
