@@ -21,12 +21,9 @@ export class PaymentsCron {
     const payments = await this.paymentRepository.find({
       where: {
         status: In([PaymentStatusEnum.RETRY, PaymentStatusEnum.PROCESSING]),
+        attempts: In([1, 2, 3]),
       },
     });
-
-    this.logger.debug(
-      `Found ${payments.length} payments in processing or retry status`,
-    );
 
     if (payments.length > 0) {
       for (const payment of payments) {
