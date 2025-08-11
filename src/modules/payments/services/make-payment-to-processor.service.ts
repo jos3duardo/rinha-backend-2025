@@ -26,7 +26,6 @@ export class MakePaymentToProcessorService {
       }),
     );
     if (response.status !== 200) {
-      this.logger.error(response);
       throw new Error(response.data.message || 'Payment processor error');
     }
     return response.status === 200;
