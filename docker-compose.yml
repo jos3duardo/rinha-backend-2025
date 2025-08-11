@@ -2,23 +2,18 @@ services:
   api1:
     container_name: api1
     hostname: api1
-    build:
-      context: .
-      dockerfile: Dockerfile
-    entrypoint: ./docker/entrypoint.sh
+    image: payment2:latest
     networks:
       - backend
       - payment-processor
-    volumes:
-      - .:/app
     depends_on:
       - redis
       - database
-    #    deploy:
-    #      resources:
-    #        limits:
-    #          cpus: "0.15"
-    #          memory: "80MB"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.30"
+          memory: "80MB"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://api1:9999" ]
       interval: 30s
@@ -28,23 +23,18 @@ services:
   api2:
     container_name: api2
     hostname: api2
-    build:
-      context: .
-      dockerfile: Dockerfile
-    entrypoint: ./docker/entrypoint.sh
+    image: payment2:latest
     depends_on:
       - redis
       - database
     networks:
       - backend
       - payment-processor
-    volumes:
-      - .:/app
-    #    deploy:
-    #      resources:
-    #        limits:
-    #          cpus: "0.15"
-    #          memory: "80MB"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.30"
+          memory: "80MB"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://api2:9999" ]
       interval: 30s
@@ -67,8 +57,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.10"
-          memory: "20MB"
+          cpus: "0.1"
+          memory: "10MB"
 
   redis:
     image: redis:7.2-alpine
@@ -79,12 +69,12 @@ services:
     networks:
       - backend
     volumes:
-      - redis_data:/data
+      - redis_data1:/data
     deploy:
       resources:
         limits:
-          cpus: "0.05"
-          memory: "20MB"
+          cpus: "0.10"
+          memory: "48MB"
 
   database:
     container_name: database
@@ -103,15 +93,15 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres_pwd
     volumes:
-      - database_volume:/var/lib/postgresql/data
-      - ./docker/db_init/:/docker-entrypoint-initdb.d/
+      - database_volume1:/var/lib/postgresql/data
+      - ./docker/db_init.sql:/docker-entrypoint-initdb.d/
     networks:
       - backend
     deploy:
       resources:
         limits:
-          cpus: "0.5"
-          memory: "110MB"
+          cpus: "0.70"
+          memory: "117MB"
 
 networks:
   backend:
@@ -120,5 +110,5 @@ networks:
     external: true
 
 volumes:
-  database_volume:
-  redis_data:
+  database_volume1:
+  redis_data1:
