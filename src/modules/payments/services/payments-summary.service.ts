@@ -4,6 +4,7 @@ import { Payment } from '../entities/payment.entity';
 import { Repository } from 'typeorm';
 import { QueueService } from '../../queue/queue.service';
 import { PaymentStatusEnum } from '../enumns/payment-status.enum';
+import { ProcessorTypeEnum } from '../enumns/processor-type.enum';
 
 @Injectable()
 export class PaymentsSummaryService {
@@ -21,7 +22,9 @@ export class PaymentsSummaryService {
       .addSelect('COUNT(*)', 'totalRequests')
       .addSelect('SUM(payment.amount)', 'totalAmount')
       .where('payment.createdAt BETWEEN :from AND :to', { from, to })
-      .where('payment.status = :status', { status: PaymentStatusEnum.SUCCESS })
+      .andWhere('payment.status = :status', {
+        status: PaymentStatusEnum.SUCCESS,
+      })
       .groupBy('payment.paymentProcessor');
 
     const results = await qb.getRawMany();
@@ -32,10 +35,10 @@ export class PaymentsSummaryService {
     };
 
     for (const row of results) {
-      if (row.processorType === 'default') {
+      if (row.processorType === ProcessorTypeEnum.DEFAULT) {
         summary.default.totalRequests = Number(row.totalRequests);
         summary.default.totalAmount = Number(row.totalAmount);
-      } else if (row.processorType === 'fallback') {
+      } else if (row.processorType === ProcessorTypeEnum.FALLBACK) {
         summary.fallback.totalRequests = Number(row.totalRequests);
         summary.fallback.totalAmount = Number(row.totalAmount);
       }
