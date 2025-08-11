@@ -49,8 +49,15 @@ export class ProcessPaymentService {
         `Error processing payment ${paymentId}:`,
         error.message,
       );
+
+      const status =
+        payment.attempts >= 2
+          ? PaymentStatusEnum.FAILED
+          : PaymentStatusEnum.RETRY;
+
       await this.repository.update(payment.id, {
-        status: PaymentStatusEnum.RETRY,
+        status,
+        attempts: +payment.attempts + 1,
       });
     }
   }
