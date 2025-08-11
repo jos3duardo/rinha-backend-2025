@@ -30,6 +30,9 @@ export class Payment {
   @Column({ type: 'text', nullable: true })
   errorMessage: string;
 
+  @Column({ nullable: true })
+  attempts: number;
+
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;
 }
