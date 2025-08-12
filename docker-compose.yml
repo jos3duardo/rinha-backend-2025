@@ -12,14 +12,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.30"
-          memory: "80MB"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://api1:9999" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+          cpus: "0.35"
+          memory: "90MB"
 
+  
   api2:
     container_name: api2
     hostname: api2
@@ -33,14 +29,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.30"
-          memory: "80MB"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://api2:9999" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
+          cpus: "0.35"
+          memory: "90MB"
+  
+  
   nginx:
     image: nginx:latest
     container_name: nginx
@@ -73,8 +65,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.10"
-          memory: "48MB"
+          cpus: "0.20"
+          memory: "70MB"
 
   database:
     container_name: database
@@ -83,11 +75,6 @@ services:
     platform: linux/amd64
     ports:
       - "5432:5432"
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d payment" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
     environment:
       - POSTGRES_DB=payment
       - POSTGRES_USER=postgres
@@ -100,8 +87,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.70"
-          memory: "117MB"
+          cpus: "0.50"
+          memory: "90MB"
 
 networks:
   backend:
