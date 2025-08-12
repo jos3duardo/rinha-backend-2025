@@ -1,7 +1,6 @@
 services:
   api1:
     container_name: api1
-    hostname: api1
     image: payment3:latest
     networks:
       - backend
@@ -18,7 +17,6 @@ services:
 
   api2:
     container_name: api2
-    hostname: api2
     image: payment3:latest
     depends_on:
       - redis
@@ -36,7 +34,6 @@ services:
   nginx:
     image: nginx:latest
     container_name: nginx
-    hostname: nginx
     ports:
       - "9999:9999"
     volumes:
@@ -54,7 +51,6 @@ services:
 
   redis:
     image: redis:7.2-alpine
-    hostname: redis
     platform: linux/amd64
     ports:
       - "6379:6379"
@@ -71,7 +67,6 @@ services:
   database:
     container_name: database
     image: postgres:alpine
-    hostname: database
     platform: linux/amd64
     ports:
       - "5432:5432"
