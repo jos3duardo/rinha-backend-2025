@@ -5,7 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ProcessPaymentService } from '../services/process-payment.service';
 import { PAYMENT_QUEUE } from '../../queue/constants/queue.constants';
 
-@Processor(PAYMENT_QUEUE)
+@Processor(PAYMENT_QUEUE, { concurrency: 2 })
 @Injectable()
 export class PaymentProcessor extends WorkerHost {
   private readonly logger = new Logger(PaymentProcessor.name);
@@ -15,18 +15,7 @@ export class PaymentProcessor extends WorkerHost {
   }
 
   async process(job: Job<PaymentJobData>) {
-    const { paymentId, retryCount = 0 } = job.data;
-
-    try {
-      await this.processPaymentService.execute(paymentId);
-
-      return { success: true, paymentId };
-    } catch (error) {
-      this.logger.error(
-        `Failed to process payment ${paymentId}:`,
-        error.message,
-      );
-      throw error;
-    }
+    const payment = job.data;
+    await this.processPaymentService.execute(payment);
   }
 }

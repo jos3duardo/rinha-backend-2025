@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { ProcessorTypeEnum } from '../enumns/processor-type.enum';
 import { PaymentStatusEnum } from '../enumns/payment-status.enum';
 import { MakePaymentToProcessorService } from '../services/make-payment-to-processor.service';
+import { PaymentJobData } from '../../queue/queue.service';
 
 @Injectable()
 export class PaymentFallbackProcessor {
@@ -17,7 +18,7 @@ export class PaymentFallbackProcessor {
     private makePaymentToProcessorService: MakePaymentToProcessorService,
   ) {}
 
-  async execute(payment: Payment): Promise<boolean> {
+  async execute(payment: PaymentJobData): Promise<boolean> {
     const url = this.configService.get('paymentProcessors.fallbackUrl');
 
     const responseExists = await this.makePaymentToProcessorService.execute(
@@ -26,8 +27,10 @@ export class PaymentFallbackProcessor {
     );
 
     if (responseExists) {
-      await this.repository.update(payment.id, {
-        ...payment,
+      await this.repository.save({
+        amount: payment.paymentData.amount,
+        correlationId: payment.paymentData.correlationId,
+        createdAt: payment.createdAt,
         paymentProcessor: ProcessorTypeEnum.FALLBACK,
         status: PaymentStatusEnum.SUCCESS,
       });
