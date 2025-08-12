@@ -4,7 +4,6 @@ import { PaymentsController } from './payments.controller';
 import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Payment } from './entities/payment.entity';
-import { HealthModule } from '../health/health.module';
 import { PaymentDefaultProcessor } from './processor/payment-default.processor';
 import { PaymentProcessor } from './processor/payment.processor';
 import { ProcessPaymentService } from './services/process-payment.service';
@@ -12,14 +11,12 @@ import { QueueModule } from '../queue/queue.module';
 import { DatabaseModule } from '../database/database.module';
 import { PaymentFallbackProcessor } from './processor/payment-fallback.processor';
 import { PaymentsSummaryService } from './services/payments-summary.service';
-import { PaymentsCron } from './cron/payments.cron';
 import { MakePaymentToProcessorService } from './services/make-payment-to-processor.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Payment]),
     HttpModule,
-    HealthModule,
     QueueModule,
     DatabaseModule,
   ],
@@ -31,7 +28,6 @@ import { MakePaymentToProcessorService } from './services/make-payment-to-proces
     ProcessPaymentService,
     PaymentFallbackProcessor,
     PaymentsSummaryService,
-    PaymentsCron,
     MakePaymentToProcessorService,
   ],
 })
