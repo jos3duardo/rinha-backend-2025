@@ -1,64 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Payment } from '../entities/payment.entity';
-import { Repository } from 'typeorm';
-import { HealthService } from '../../health/services/health.service';
-import { ProcessorTypeEnum } from '../enumns/processor-type.enum';
-import { PaymentStatusEnum } from '../enumns/payment-status.enum';
 import { PaymentDefaultProcessor } from '../processor/payment-default.processor';
 import { PaymentFallbackProcessor } from '../processor/payment-fallback.processor';
+import { PaymentJobData } from '../../queue/queue.service';
 
 @Injectable()
 export class ProcessPaymentService {
   private readonly logger = new Logger(ProcessPaymentService.name);
 
   constructor(
-    @InjectRepository(Payment) private readonly repository: Repository<Payment>,
-    private healthService: HealthService,
     private paymentDefaultProcessor: PaymentDefaultProcessor,
     private paymentFallbackProcessor: PaymentFallbackProcessor,
   ) {}
 
-  async execute(paymentId: string): Promise<void> {
-    const payment = await this.repository.findOne({
-      where: { id: paymentId },
-    });
-
-    if (!payment) {
-      throw new Error(`Payment ${paymentId} not found`);
-    }
-
-    await this.repository.update(paymentId, {
-      status: PaymentStatusEnum.PROCESSING,
-    });
-
-    const preferredProcessor = this.healthService.getPreferredProcessor();
-
-    if (!preferredProcessor) {
-      throw new Error('No payment processor available');
-    }
-
-    try {
-      if (preferredProcessor === ProcessorTypeEnum.DEFAULT) {
-        await this.paymentDefaultProcessor.execute(payment);
-      } else {
-        await this.paymentFallbackProcessor.execute(payment);
-      }
-    } catch (error) {
-      this.logger.error(
-        `Error processing payment ${paymentId}:`,
-        error.message,
-      );
-
-      const status =
-        payment.attempts >= 2
-          ? PaymentStatusEnum.FAILED
-          : PaymentStatusEnum.RETRY;
-
-      await this.repository.update(payment.id, {
-        status,
-        attempts: +payment.attempts + 1,
-      });
-    }
+  async execute(job: PaymentJobData): Promise<void> {
+    const result = await this.paymentDefaultProcessor.execute(job);
+    if (!result) await this.paymentFallbackProcessor.execute(job);
   }
 }
