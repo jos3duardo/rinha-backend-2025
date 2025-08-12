@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Payment } from '../entities/payment.entity';
 import { Repository } from 'typeorm';
 import { QueueService } from '../../queue/queue.service';
-import { PaymentStatusEnum } from '../enumns/payment-status.enum';
 
 @Injectable()
 export class PaymentsService {
@@ -16,14 +15,9 @@ export class PaymentsService {
   ) {}
 
   async store(createPaymentDto: CreatePaymentDto) {
-    const payment = await this.repository.save({
-      ...createPaymentDto,
-      status: PaymentStatusEnum.PENDING,
-    });
-
     await this.queueService.addPaymentJob({
-      paymentId: payment.id,
       paymentData: createPaymentDto,
+      createdAt: new Date(),
     });
 
     return {
