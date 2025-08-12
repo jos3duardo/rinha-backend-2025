@@ -15,7 +15,7 @@ import { Payment } from '../payments/entities/payment.entity';
         password: configService.get('database.password'),
         database: configService.get('database.database'),
         entities: [Payment],
-        synchronize: process.env.NODE_ENV !== 'production', // Apenas para desenvolvimento
+        synchronize: false, // Apenas para desenvolvimento
         logging: process.env.NODE_ENV === 'development',
       }),
       inject: [ConfigService],
