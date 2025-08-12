@@ -1,7 +1,5 @@
 services:
   api1:
-    container_name: api1
-    hostname: api1
     image: payment2:latest
     networks:
       - backend
@@ -12,13 +10,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.35"
-          memory: "90MB"
+          cpus: "0.40"
+          memory: "85MB"
 
   
   api2:
-    container_name: api2
-    hostname: api2
     image: payment2:latest
     depends_on:
       - redis
@@ -29,14 +25,12 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.35"
-          memory: "90MB"
+          cpus: "0.40"
+          memory: "85MB"
   
-  
+
   nginx:
     image: nginx:latest
-    container_name: nginx
-    hostname: nginx
     ports:
       - "9999:9999"
     volumes:
@@ -54,14 +48,11 @@ services:
 
   redis:
     image: redis:7.2-alpine
-    hostname: redis
     platform: linux/amd64
     ports:
       - "6379:6379"
     networks:
       - backend
-    volumes:
-      - redis_data1:/data
     deploy:
       resources:
         limits:
@@ -69,9 +60,8 @@ services:
           memory: "70MB"
 
   database:
-    container_name: database
-    image: postgres:alpine
-    hostname: database
+    image: postgres:17-alpine
+    command: postgres -c checkpoint_timeout=600 -c max_wal_size=4096 -c synchronous_commit=0 -c fsync=0 -c full_page_writes=0
     platform: linux/amd64
     ports:
       - "5432:5432"
@@ -80,15 +70,19 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres_pwd
     volumes:
-      - database_volume1:/var/lib/postgresql/data
-      - ./docker/db_init.sql:/docker-entrypoint-initdb.d/
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 3s
+      timeout: 3s
+      retries: 5
     networks:
       - backend
     deploy:
       resources:
         limits:
-          cpus: "0.50"
-          memory: "90MB"
+          cpus: "0.30"
+          memory: "100MB"
 
 networks:
   backend:
@@ -97,5 +91,5 @@ networks:
     external: true
 
 volumes:
-  database_volume1:
-  redis_data1:
+  db_volume:
+  redis_data:
