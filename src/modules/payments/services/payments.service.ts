@@ -16,8 +16,7 @@ export class PaymentsService {
 
   async store(createPaymentDto: CreatePaymentDto) {
     await this.queueService.addPaymentJob({
-      paymentData: createPaymentDto,
-      createdAt: new Date(),
+      ...createPaymentDto,
     });
 
     return {
