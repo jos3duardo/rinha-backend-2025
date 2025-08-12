@@ -4,6 +4,7 @@ import { HttpService } from '@nestjs/axios';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Payment } from '../entities/payment.entity';
 import { Repository } from 'typeorm';
+import { PaymentJobData } from '../../queue/queue.service';
 
 @Injectable()
 export class MakePaymentToProcessorService {
@@ -14,10 +15,10 @@ export class MakePaymentToProcessorService {
     @InjectRepository(Payment) private readonly repository: Repository<Payment>,
   ) {}
 
-  async execute(payment: Payment, url: string): Promise<boolean> {
+  async execute(payment: PaymentJobData, url: string): Promise<boolean> {
     const paymentData = {
-      amount: payment.amount,
-      correlationId: payment.correlationId,
+      amount: payment.paymentData.amount,
+      correlationId: payment.paymentData.correlationId,
     };
 
     const response = await firstValueFrom(
