@@ -4,9 +4,8 @@ import { Payment } from '../entities/payment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProcessorTypeEnum } from '../enumns/processor-type.enum';
-import { PaymentStatusEnum } from '../enumns/payment-status.enum';
 import { MakePaymentToProcessorService } from '../services/make-payment-to-processor.service';
-import { PaymentJobData } from '../../queue/queue.service';
+import { CreatePaymentDto } from '../dto/create-payment.dto';
 
 @Injectable()
 export class PaymentFallbackProcessor {
@@ -18,7 +17,7 @@ export class PaymentFallbackProcessor {
     private makePaymentToProcessorService: MakePaymentToProcessorService,
   ) {}
 
-  async execute(payment: PaymentJobData): Promise<boolean> {
+  async execute(payment: CreatePaymentDto): Promise<boolean> {
     const url = this.configService.get('paymentProcessors.fallbackUrl');
 
     const responseExists = await this.makePaymentToProcessorService.execute(
@@ -26,16 +25,12 @@ export class PaymentFallbackProcessor {
       url,
     );
 
-    if (responseExists) {
-      await this.repository.save({
-        amount: payment.paymentData.amount,
-        correlationId: payment.paymentData.correlationId,
-        createdAt: payment.createdAt,
-        paymentProcessor: ProcessorTypeEnum.FALLBACK,
-        status: PaymentStatusEnum.SUCCESS,
-      });
-      return true;
-    }
-    return false;
+    if (!responseExists) return false;
+
+    await this.repository.save({
+      ...payment,
+      paymentProcessor: ProcessorTypeEnum.FALLBACK,
+    });
+    return true;
   }
 }
