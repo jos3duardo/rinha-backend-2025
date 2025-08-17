@@ -26,12 +26,14 @@ export class PaymentDefaultProcessor {
     );
 
     if (!responseExists) return false;
-
-    await this.repository.save({
-      ...payment,
-      paymentProcessor: ProcessorTypeEnum.DEFAULT,
-    });
-
+    await this.repository.query(
+      `
+      INSERT INTO payments (correlation_id, amount, payment_processor)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (correlation_id) DO NOTHING
+      `,
+      [payment.correlationId, payment.amount, ProcessorTypeEnum.DEFAULT],
+    );
     return true;
   }
 }
