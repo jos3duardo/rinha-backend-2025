@@ -16,7 +16,7 @@ import { Payment } from '../payments/entities/payment.entity';
         database: configService.get('database.database'),
         entities: [Payment],
         extra: {
-          max: 10,
+          max: 5,
           // connectionTimeoutMillis: 3000,
         },
         synchronize: false,

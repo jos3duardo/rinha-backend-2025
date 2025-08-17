@@ -8,7 +8,7 @@ import { Payment } from '../entities/payment.entity';
 import { Repository } from 'typeorm';
 import { CreatePaymentDto } from '../dto/create-payment.dto';
 
-@Processor(PAYMENT_QUEUE, { concurrency: 10 })
+@Processor(PAYMENT_QUEUE, { concurrency: 5 })
 @Injectable()
 export class PaymentProcessor extends WorkerHost {
   private readonly logger = new Logger(PaymentProcessor.name);
