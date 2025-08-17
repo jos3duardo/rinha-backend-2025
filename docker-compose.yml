@@ -46,6 +46,7 @@ services:
 
   nginx:
     image: nginx:latest
+    restart: always
     ports:
       - '9999:9999'
     volumes:
@@ -60,7 +61,7 @@ services:
       resources:
         limits:
           cpus: '0.15'
-          memory: '10MB'
+          memory: '8MB'
 
   redis:
     image: redis:7.2-alpine
@@ -74,7 +75,7 @@ services:
       resources:
         limits:
           cpus: '0.40'
-          memory: '22MB'
+          memory: '25MB'
 
   database:
     image: postgres:17-alpine
@@ -100,7 +101,7 @@ services:
       resources:
         limits:
           cpus: '0.25'
-          memory: '125MB'
+          memory: '122MB'
 
 networks:
   backend:
