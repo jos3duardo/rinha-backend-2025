@@ -20,7 +20,18 @@ operations, and SQL for persistent storage.
 
 ### Link do desafio
 
-- [Rinha de Backend - 2025](https://github.com/zanfranceschi/rinha-de-backend-2025/
-  )
+- [Rinha de Backend - 2025](https://github.com/zanfranceschi/rinha-de-backend-2025/)
 
-![img.png](img.png)
+## Performance Report
+
+<details>
+<summary>📊 Load Test Results</summary>
+
+```html
+<iframe src="./report.html" width="100%" height="600px" frameborder="0">
+  <p>
+    Your browser does not support iframes.
+    <a href="./report.html">Click here to view the report</a>
+  </p>
+</iframe>
+```
