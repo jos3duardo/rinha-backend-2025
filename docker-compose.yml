@@ -1,6 +1,6 @@
 services:
   api1:
-    image: payment2:latest
+    image: jos3duardo/rinha-backend-2025:v1.0
     restart: always
     networks:
       - backend
@@ -15,7 +15,7 @@ services:
           memory: '64MB'
 
   api2:
-    image: payment2:latest
+    image: jos3duardo/rinha-backend-2025:v1.0
     restart: always
     depends_on:
       - redis
@@ -30,7 +30,7 @@ services:
           memory: '64MB'
 
   api3:
-    image: payment2:latest
+    image: jos3duardo/rinha-backend-2025:v1.0
     restart: always
     depends_on:
       - redis
