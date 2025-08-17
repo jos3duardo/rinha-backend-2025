@@ -12,7 +12,7 @@ services:
       resources:
         limits:
           cpus: '0.3'
-          memory: '65MB'
+          memory: '64MB'
 
   api2:
     image: payment2:latest
@@ -27,7 +27,7 @@ services:
       resources:
         limits:
           cpus: '0.3'
-          memory: '65MB'
+          memory: '64MB'
 
   api3:
     image: payment2:latest
@@ -42,7 +42,7 @@ services:
       resources:
         limits:
           cpus: '0.3'
-          memory: '65MB'
+          memory: '64MB'
 
   nginx:
     image: nginx:latest
@@ -61,7 +61,7 @@ services:
       resources:
         limits:
           cpus: '0.15'
-          memory: '8MB'
+          memory: '10MB'
 
   redis:
     image: redis:7.2-alpine
@@ -101,7 +101,7 @@ services:
       resources:
         limits:
           cpus: '0.25'
-          memory: '122MB'
+          memory: '123MB'
 
 networks:
   backend:
