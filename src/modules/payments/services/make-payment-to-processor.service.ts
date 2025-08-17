@@ -23,7 +23,7 @@ export class MakePaymentToProcessorService {
 
     const response = await firstValueFrom(
       this.httpService.post(`${url}/payments`, paymentData, {
-        timeout: 2500,
+        timeout: 3000,
       }),
     );
     return response.status === 200;

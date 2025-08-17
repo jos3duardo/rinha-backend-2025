@@ -15,13 +15,6 @@ export class PaymentFallbackProcessor {
   async execute(payment: CreatePaymentDto): Promise<boolean> {
     const url = this.configService.get('paymentProcessors.fallbackUrl');
 
-    const responseExists = await this.makePaymentToProcessorService.execute(
-      payment,
-      url,
-    );
-
-    if (!responseExists) return false;
-
-    return true;
+    return await this.makePaymentToProcessorService.execute(payment, url);
   }
 }

@@ -20,20 +20,6 @@ export class PaymentDefaultProcessor {
   async execute(payment: CreatePaymentDto): Promise<boolean> {
     const url = this.configService.get('paymentProcessors.defaultUrl');
 
-    const responseExists = await this.makePaymentToProcessorService.execute(
-      payment,
-      url,
-    );
-
-    if (!responseExists) return false;
-    await this.repository.query(
-      `
-      INSERT INTO payments (correlation_id, amount, payment_processor)
-      VALUES ($1, $2, $3)
-      ON CONFLICT (correlation_id) DO NOTHING
-      `,
-      [payment.correlationId, payment.amount, ProcessorTypeEnum.DEFAULT],
-    );
-    return true;
+    return await this.makePaymentToProcessorService.execute(payment, url);
   }
 }

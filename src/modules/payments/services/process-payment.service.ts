@@ -13,43 +13,63 @@ export class ProcessPaymentService {
 
   constructor(
     @InjectRepository(Payment) private readonly repository: Repository<Payment>,
-
     private paymentDefaultProcessor: PaymentDefaultProcessor,
     private paymentFallbackProcessor: PaymentFallbackProcessor,
   ) {}
 
   async execute(job: CreatePaymentDto): Promise<void> {
-    let result = false;
+    const existingPayment = await this.repository.findOne({
+      where: { correlationId: job.correlationId },
+    });
+
+    if (existingPayment) return;
+
+    let defaultSuccess = false;
     try {
-      result = await this.paymentDefaultProcessor.execute(job);
+      defaultSuccess = await this.paymentDefaultProcessor.execute(job);
+
+      if (defaultSuccess) {
+        await this.savePayment(job, ProcessorTypeEnum.DEFAULT);
+        return;
+      }
     } catch (error) {
       if (error.response?.status === 422) {
-        await this.repository.query(
-          `
-            INSERT INTO payments (correlation_id, amount, payment_processor)
-            VALUES ($1, $2, $3)
-            ON CONFLICT (correlation_id) DO NOTHING
-            `,
-          [job.correlationId, job.amount, ProcessorTypeEnum.DEFAULT],
-        );
-        this.logger.warn(
-          `Pagamento já realizado para correlationId: ${job.correlationId}`,
-        );
-        return; // Não lança exceção, job é considerado processado
+        await this.savePayment(job, ProcessorTypeEnum.DEFAULT);
+        return;
       }
       this.logger.warn(`Default processor failed: ${error.message}`);
     }
-    if (!result) {
-      await this.paymentFallbackProcessor.execute(job);
-      await this.repository.query(
-        `
-        INSERT INTO payments (correlation_id, amount, payment_processor)
-        VALUES ($1, $2, $3)
-        ON CONFLICT (correlation_id) DO NOTHING
-        `,
-        [job.correlationId, job.amount, ProcessorTypeEnum.FALLBACK],
-      );
+
+    let fallbackSuccess = false;
+    try {
+      fallbackSuccess = await this.paymentFallbackProcessor.execute(job);
+
+      if (fallbackSuccess) {
+        await this.savePayment(job, ProcessorTypeEnum.FALLBACK);
+        return;
+      }
+    } catch (error) {
+      if (error.response?.status === 422) {
+        await this.savePayment(job, ProcessorTypeEnum.FALLBACK);
+
+        return;
+      }
+
+      throw new Error(`Payment processing failed for ${job.correlationId}`);
     }
-    throw new Error('Payment processing failed');
+  }
+
+  private async savePayment(
+    job: CreatePaymentDto,
+    processor: ProcessorTypeEnum,
+  ): Promise<void> {
+    await this.repository.query(
+      `
+      INSERT INTO payments (correlation_id, amount, payment_processor)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (correlation_id) DO NOTHING
+      `,
+      [job.correlationId, job.amount, processor],
+    );
   }
 }

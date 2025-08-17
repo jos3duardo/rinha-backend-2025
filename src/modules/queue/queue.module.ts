@@ -9,6 +9,7 @@ import { PAYMENT_QUEUE } from './constants/queue.constants';
       connection: {
         host: 'redis',
         port: 6379,
+        enableReadyCheck: false,
       },
     }),
     BullModule.registerQueue({
