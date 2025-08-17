@@ -23,12 +23,9 @@ export class MakePaymentToProcessorService {
 
     const response = await firstValueFrom(
       this.httpService.post(`${url}/payments`, paymentData, {
-        timeout: 2000,
+        timeout: 2500,
       }),
     );
-    if (response.status !== 200) {
-      throw new Error(response.data.message || 'Payment processor error');
-    }
     return response.status === 200;
   }
 }
