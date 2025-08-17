@@ -75,7 +75,7 @@ services:
       resources:
         limits:
           cpus: '0.40'
-          memory: '24MB'
+          memory: '25MB'
 
   database:
     image: postgres:17-alpine
@@ -101,7 +101,7 @@ services:
       resources:
         limits:
           cpus: '0.25'
-          memory: '125MB'
+          memory: '124MB'
 
 networks:
   backend:
