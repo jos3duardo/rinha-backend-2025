@@ -24,14 +24,17 @@ operations, and SQL for persistent storage.
 
 ## Performance Report
 
-<details>
-<summary>📊 Load Test Results</summary>
+## Performance Report
 
-```html
+📊 **Load Test Results**
+
+![Performance Report Preview](./docs/report-preview.png)
+
+[📋 View Full Report](./report.html)
+
 <iframe src="./report.html" width="100%" height="600px" frameborder="0">
   <p>
     Your browser does not support iframes.
     <a href="./report.html">Click here to view the report</a>
   </p>
 </iframe>
-```
