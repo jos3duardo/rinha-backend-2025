@@ -8,7 +8,7 @@ import { Payment } from '../entities/payment.entity';
 import { Repository } from 'typeorm';
 import { CreatePaymentDto } from '../dto/create-payment.dto';
 
-@Processor(PAYMENT_QUEUE, { concurrency: 2 })
+@Processor(PAYMENT_QUEUE, { concurrency: 20 })
 @Injectable()
 export class PaymentProcessor extends WorkerHost {
   private readonly logger = new Logger(PaymentProcessor.name);
@@ -27,6 +27,13 @@ export class PaymentProcessor extends WorkerHost {
       where: { correlationId: payment.correlationId },
     });
 
-    if (!exists) await this.processPaymentService.execute(payment);
+    if (!exists) {
+      try {
+        await this.processPaymentService.execute(payment);
+      } catch (error) {
+        this.logger.error(`Error processing payment: ${error.message}`);
+        throw error;
+      }
+    }
   }
 }
