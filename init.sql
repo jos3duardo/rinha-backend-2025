@@ -4,3 +4,5 @@ CREATE UNLOGGED TABLE payments (
     payment_processor VARCHAR(10),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX idx_payments_correlation_id ON payments (correlation_id);
