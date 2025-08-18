@@ -1,6 +1,6 @@
 services:
   api1:
-    image: payment2:latest
+    image: rinha-backend-2025
     restart: always
     networks:
       - backend
@@ -12,10 +12,10 @@ services:
       resources:
         limits:
           cpus: '0.3'
-          memory: '64MB'
+          memory: '67MB'
 
   api2:
-    image: payment2:latest
+    image: rinha-backend-2025
     restart: always
     depends_on:
       - redis
@@ -27,10 +27,10 @@ services:
       resources:
         limits:
           cpus: '0.3'
-          memory: '64MB'
+          memory: '67MB'
 
   api3:
-    image: payment2:latest
+    image: rinha-backend-2025
     restart: always
     depends_on:
       - redis
@@ -42,7 +42,7 @@ services:
       resources:
         limits:
           cpus: '0.3'
-          memory: '64MB'
+          memory: '67MB'
 
   nginx:
     image: nginx:latest
@@ -75,7 +75,7 @@ services:
       resources:
         limits:
           cpus: '0.40'
-          memory: '25MB'
+          memory: '15MB'
 
   database:
     image: postgres:17-alpine
@@ -101,7 +101,7 @@ services:
       resources:
         limits:
           cpus: '0.25'
-          memory: '124MB'
+          memory: '125MB'
 
 networks:
   backend:
