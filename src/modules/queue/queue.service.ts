@@ -11,13 +11,13 @@ export class QueueService {
   async addPaymentJob(data: CreatePaymentDto): Promise<void> {
     await this.paymentQueue.add(PAYMENT_QUEUE, data, {
       jobId: data.correlationId,
-      attempts: 90,
+      attempts: 3,
       backoff: {
         type: 'exponential',
         delay: 100,
       },
       removeOnComplete: true,
-      removeOnFail: 101,
+      removeOnFail: 5,
     });
   }
 }
